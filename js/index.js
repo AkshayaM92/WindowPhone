@@ -2,7 +2,7 @@ var j = jQuery.noConflict();
 var defaultPagePath='app/pages/';
 var headerMsg = "Expenzing";
 var urlPath;
-var WebServicePath = 'http://1.255.255.36:9898/NexstepWebService/mobileLinkResolver.service?result=';
+var WebServicePath = 'http://1.255.255.188:8088/NexstepWebService/mobileLinkResolver.service?result=';
 var clickedFlagCar = false;
 var clickedFlagTicket = false;
 var clickedFlagHotel = false;
@@ -37,7 +37,6 @@ function login()
     
 	var headerBackBtn=defaultPagePath+'categoryMsgPage.html';
 	var pageRef=defaultPagePath+'category.html';
-	alert("urlPath"+urlPath);
 	j('#loading').show();
     j.ajax({
          url: urlPath+"LoginWebService",
@@ -78,15 +77,16 @@ function login()
 
  }
  
- function commanLogin(){
+function commanLogin(){
  	var userName = document.getElementById("userName");
  	var userNameValue = userName.value; 
  	var domainName = userNameValue.split('@')[1];
 	var jsonToDomainNameSend = new Object();
-  	jsonToDomainNameSend["userName"] = domainName;
-	WebServicePath = WebServicePath + JSON.stringify(jsonToDomainNameSend);
+	jsonToDomainNameSend["userName"] = domainName;
+  	var res=JSON.stringify(jsonToDomainNameSend);
+	var requestPath = WebServicePath +res;
 	j.ajax({
-         url: WebServicePath,
+         url: requestPath,
          type: 'GET',
          dataType: 'json',
          crossDomain: true,
@@ -97,7 +97,7 @@ function login()
          		login();
         	}else if(data.status == 'Failure'){
 				successMessage = data.message;
-			  	document.getElementById("loginErrorMsg").innerHTML = successMessage;
+				document.getElementById("loginErrorMsg").innerHTML = successMessage;
  			   j('#loginErrorMsg').hide().fadeIn('slow').delay(2000).fadeOut('slow');
  			}else{
 				successMessage = data.message;
@@ -108,7 +108,6 @@ function login()
 		   
          }
    });
-
 }
 
   function createBusinessExp(){
@@ -297,7 +296,6 @@ function saveBusinessExpDetails(jsonBEArr,busExpDetailsArr){
 function saveTravelSettleExpDetails(jsonTSArr,tsExpDetailsArr){
 	var headerBackBtn=defaultPagePath+'backbtnPage.html';
 	 var jsonToSaveTS = new Object();
-	 alert("urlPath"+window.localStorage.getItem("urlPath"));
 	 jsonToSaveTS["employeeId"] = window.localStorage.getItem("EmployeeId");
 	 jsonToSaveTS["expenseDetails"] = jsonTSArr;
 	 var pageRef=defaultPagePath+'success.html';
