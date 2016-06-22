@@ -2,7 +2,7 @@ var j = jQuery.noConflict();
 var defaultPagePath='app/pages/';
 var headerMsg = "Expenzing";
 var urlPath;
-var WebServicePath = 'http://live.nexstepapps.com:8284/NexstepWebService/mobileLinkResolver.service?result=';
+var WebServicePath = 'http://1.255.255.188:8088/NexstepWebService/mobileLinkResolver.service';
 var clickedFlagCar = false;
 var clickedFlagTicket = false;
 var clickedFlagHotel = false;
@@ -83,26 +83,34 @@ function commanLogin(){
  	var domainName = userNameValue.split('@')[1];
 	var jsonToDomainNameSend = new Object();
 	jsonToDomainNameSend["userName"] = domainName;
-  	var res=JSON.stringify(jsonToDomainNameSend);
-	var requestPath = WebServicePath +res;
+	jsonToDomainNameSend["mobilePlatform"] = device.platform;
+	//jsonToDomainNameSend["mobilePlatform"] = "Android";
+  	//var res=JSON.stringify(jsonToDomainNameSend);
+	var requestPath = WebServicePath;
 	j.ajax({
          url: requestPath,
-         type: 'GET',
+         type: 'POST',
+         contentType : "application/json",
          dataType: 'json',
          crossDomain: true,
          data: JSON.stringify(jsonToDomainNameSend),
 		 success: function(data) {
          	if (data.status == 'Success'){
          		urlPath = data.message;
+         		//setUrlPathLocalStorage(urlPath);
          		login();
         	}else if(data.status == 'Failure'){
 				successMessage = data.message;
 				document.getElementById("loginErrorMsg").innerHTML = successMessage;
  			   j('#loginErrorMsg').hide().fadeIn('slow').delay(2000).fadeOut('slow');
  			}else{
-				successMessage = data.message;
-             alert(successMessage);
-           }
+ 				successMessage = data.message;
+ 				if(successMessage == "" || successMessage == null){
+				alert("Please enter correct username or password");				
+				}else{
+ 				alert(successMessage);	
+ 				}	
+ 			}
 		},
          error:function(data) {
 		   
